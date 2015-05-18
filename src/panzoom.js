@@ -307,7 +307,10 @@
 		// Note: this does not affect zooming outside of the parent
 		// Set this value to 'invert' to only allow panning outside of the parent element (basically the opposite of the normal use of contain)
 		// 'invert' is useful for a large panzoom element where you don't want to show anything behind it
-		contain: false
+		contain: false,
+
+		widthScale: 1,
+		heightScale: 1
 	};
 
 	Panzoom.prototype = {
@@ -1010,7 +1013,7 @@
 		_getDistance: function(touches) {
 			var touch1 = touches[0];
 			var touch2 = touches[1];
-			return Math.sqrt(Math.pow(Math.abs(touch2.clientX - touch1.clientX), 2) + Math.pow(Math.abs(touch2.clientY - touch1.clientY), 2));
+			return Math.sqrt(Math.pow(Math.abs(touch2.clientX - touch1.clientX) * this.options.widthScale, 2) + Math.pow(Math.abs(touch2.clientY - touch1.clientY) * this.options.heightScale, 2));
 		},
 
 		/**
@@ -1021,8 +1024,8 @@
 			var touch1 = touches[0];
 			var touch2 = touches[1];
 			return {
-				clientX: ((touch2.clientX - touch1.clientX) / 2) + touch1.clientX,
-				clientY: ((touch2.clientY - touch1.clientY) / 2) + touch1.clientY
+				clientX: (((touch2.clientX - touch1.clientX) / 2) + touch1.clientX) * this.options.widthScale,
+				clientY: (((touch2.clientY - touch1.clientY) / 2) + touch1.clientY) * this.options.heightScale
 			};
 		},
 
@@ -1120,8 +1123,8 @@
 				move = function(e) {
 					e.preventDefault();
 					self.pan(
-						origPageX + e.pageX - startPageX,
-						origPageY + e.pageY - startPageY,
+						origPageX + (e.pageX - startPageX) * options.widthScale,
+						origPageY + (e.pageY - startPageY) * options.heightScale,
 						panOptions
 					);
 				};
